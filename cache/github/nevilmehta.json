@@ -1,0 +1,25 @@
+{
+  "username": "Nevilmehta",
+  "status": "ok",
+  "detail": "public GitHub snapshot taken 2026-10-08",
+  "public_repos": 19,
+  "days_since_last_push": 4,
+  "active_repos_90d": 3,
+  "relevant_repos": [
+    "neetcode-submissions",
+    "stocks-ai",
+    "Memory-Garden",
+    "personal-ai-assistant",
+    "Haystack-rag-chat",
+    "ai-document-intelligence",
+    "haystack-study-notes-assistant",
+    "Infomaniac-newsapp"
+  ],
+  "top_languages": [
+    "Python",
+    "TypeScript",
+    "Jupyter Notebook",
+    "JavaScript"
+  ],
+  "from_cache": false
+}

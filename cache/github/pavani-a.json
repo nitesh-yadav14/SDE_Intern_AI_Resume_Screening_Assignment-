@@ -1,0 +1,22 @@
+{
+  "username": "Pavani-A",
+  "status": "ok",
+  "detail": "public GitHub snapshot taken 2026-10-08",
+  "public_repos": 16,
+  "days_since_last_push": 0,
+  "active_repos_90d": 7,
+  "relevant_repos": [
+    "Bulk_certificate_generator",
+    "AI-Powered-Digital-Asset-Management",
+    "lenny-growth-assistant",
+    "handwritten-number-recognition",
+    "image_recognition"
+  ],
+  "top_languages": [
+    "Python",
+    "HTML",
+    "Java",
+    "JavaScript"
+  ],
+  "from_cache": false
+}

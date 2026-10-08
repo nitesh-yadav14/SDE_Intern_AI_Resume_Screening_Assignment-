@@ -1,0 +1,23 @@
+{
+  "username": "Aswinx0",
+  "status": "ok",
+  "detail": "public GitHub snapshot taken 2026-10-08",
+  "public_repos": 13,
+  "days_since_last_push": 20,
+  "active_repos_90d": 6,
+  "relevant_repos": [
+    "hiver",
+    "AI-car-rental",
+    "multimodal-rag-pipeline-",
+    "Notification_system",
+    "breathe-esg",
+    "AI-Resume-builder",
+    "Crop-Disease-Detection"
+  ],
+  "top_languages": [
+    "JavaScript",
+    "Python",
+    "Jupyter Notebook"
+  ],
+  "from_cache": false
+}

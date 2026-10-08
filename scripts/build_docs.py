@@ -92,7 +92,7 @@ td.n{{text-align:right;font-family:ui-monospace,monospace}} td.p{{font:600 9pt u
 .two{{display:grid;grid-template-columns:1fr 1fr;gap:16px}} .box{{border-left:3px solid #d9480f;padding:2px 0 2px 10px;margin:8px 0}}
 ul{{margin:4px 0;padding-left:18px}} li{{margin:2px 0}} .pb{{break-before:page}} code{{font:8.8pt ui-monospace,monospace;background:#f1ede3;padding:0 3px}}
 </style></head><body>
-<div class=k>SDE Intern · AI Resume Screening Assignment · Technical report</div>
+<div class=k>SDE Intern · AI Resume Screening Assignment · Technical report · Nitesh Yadav</div>
 <h1>Proofline: <em>every point has a receipt.</em></h1>
 <p class=lede>A Python pipeline that screens a folder of resumes for an AI/agentic SDE internship. Proofline builds an
 <b>evidence ledger</b> (one line per point awarded or deducted, each tied to the resume line that earned it), and the score is the

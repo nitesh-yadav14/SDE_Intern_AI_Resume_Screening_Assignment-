@@ -1,0 +1,15 @@
+{
+  "username": "pkr2805",
+  "status": "ok",
+  "detail": "public GitHub snapshot taken 2026-10-08",
+  "public_repos": 13,
+  "days_since_last_push": 220,
+  "active_repos_90d": 0,
+  "relevant_repos": [
+    "PR-Sentinel-AI"
+  ],
+  "top_languages": [
+    "JavaScript"
+  ],
+  "from_cache": false
+}

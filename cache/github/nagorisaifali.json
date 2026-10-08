@@ -1,0 +1,22 @@
+{
+  "username": "Nagorisaifali",
+  "status": "ok",
+  "detail": "public GitHub snapshot taken 2026-10-08",
+  "public_repos": 26,
+  "days_since_last_push": 26,
+  "active_repos_90d": 2,
+  "relevant_repos": [
+    "Loan_Approval_Predictor",
+    "Car_Price_Prediction",
+    "Electric-vehicle-knowledge-bot-",
+    "BugSpotter-AI-Powered-Code-Reviewer",
+    "Virtual_Assistant"
+  ],
+  "top_languages": [
+    "JavaScript",
+    "Jupyter Notebook",
+    "Python",
+    "CSS"
+  ],
+  "from_cache": false
+}

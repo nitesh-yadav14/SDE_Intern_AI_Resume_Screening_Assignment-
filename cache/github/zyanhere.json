@@ -1,0 +1,22 @@
+{
+  "username": "ZyanHere",
+  "status": "ok",
+  "detail": "public GitHub snapshot taken 2026-10-08",
+  "public_repos": 45,
+  "days_since_last_push": 0,
+  "active_repos_90d": 5,
+  "relevant_repos": [
+    "Zyan-is-RAGged",
+    "Zyan-analyzing-biomech",
+    "Zyan-creating-notes",
+    "Zyan_agent_for_roadmap",
+    "Zyan-is-processing-Natural-Language",
+    "lexo-agent-cli"
+  ],
+  "top_languages": [
+    "Python",
+    "JavaScript",
+    "Jupyter Notebook"
+  ],
+  "from_cache": false
+}

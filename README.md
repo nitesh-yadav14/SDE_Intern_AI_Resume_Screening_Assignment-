@@ -1,5 +1,7 @@
 # Proofline — evidence-ledger resume screening
 
+**Author:** Nitesh Yadav · [github.com/nitesh-yadav14](https://github.com/nitesh-yadav14) · SDE Intern (AI) assignment
+
 > **Every point has a receipt.** Proofline screens a folder of resumes for an AI/agentic SDE internship.
 > Instead of producing a score and then explaining it, it builds an **evidence ledger** first: one line per point
 > awarded or deducted, each tied to the resume line that earned it. The final score is just the sum of the ledger,
@@ -13,16 +15,16 @@ $ python main.py --input ./resumes --output ./output/results.json
 
    #  candidate                  score    AI   PY  CLD   GH  ENG  tier
   ──────────────────────────────────────────────────────────────────────────────
-   1  Prathamesh                  90.0  40.0 30.0 15.0  0.0  5.0  Strong shortlist
-   2  Raj Thumar                  79.5  36.7 29.0  9.3  0.0  4.5  Strong shortlist
-   3  Jyandeep Baishya            79.4  39.4 28.0  9.5  0.0  2.5  Strong shortlist
-   4  Prajwal A S                 76.5  40.0 29.0  6.0  0.0  1.5  Strong shortlist
-   5  Thejeshwaar Paasila         75.4  34.3 27.0 11.6  0.0  2.5  Strong shortlist
-   6  V Sree Raghu Vardhan        74.3  28.0 29.4 11.9  0.0  5.0  Strong shortlist
-   7  Gourab Das                  72.7  31.0 24.2 13.5  0.0  4.0  Strong shortlist
-   8  Abhinav Mishra              72.3  35.4 24.4  9.5  0.0  3.0  Strong shortlist
-   9  Arunima Saha                71.3  34.6 22.8 10.5  0.0  3.5  Shortlist
-  10  Sumaiya Sultana             70.7  32.6 21.6 12.5  0.0  4.0  Shortlist
+   1  Prathamesh                 100.0  40.0 30.0 15.0 10.0  5.0  Strong shortlist
+   2  Jyandeep Baishya            89.4  39.4 28.0  9.5 10.0  2.5  Strong shortlist
+   3  Prajwal A S                 85.5  40.0 29.0  6.0  9.0  1.5  Strong shortlist
+   4  Abhinav Mishra              82.3  35.4 24.4  9.5 10.0  3.0  Strong shortlist
+   5  Raj Thumar                  81.5  36.7 29.0  9.3  2.0  4.5  Strong shortlist
+   6  Sumaiya Sultana             80.7  32.6 21.6 12.5 10.0  4.0  Strong shortlist
+   7  Yash Maini                  80.3  27.8 28.0 10.5 10.0  4.0  Strong shortlist
+   8  V Sree Raghu Vardhan        79.8  28.0 29.4 11.9  5.5  5.0  Shortlist
+   9  Thejeshwaar Paasila         78.4  34.3 27.0 11.6  3.0  2.5  Shortlist
+  10  Vaibhav Wakde               77.9  34.0 23.0  8.6  9.5  2.8  Shortlist
   …   (+22 more eligible, 18 rejected with reasons — see output/)
 ```
 <!-- RESULTS:END -->
@@ -87,6 +89,7 @@ The hard gate is deterministic and has no LLM in it. That makes it **testable**:
 - **Penalties.** A *thin LLM wrapper* (an LLM call with no retrieval, tools, state, evaluation or pipeline) costs −6 per project, up to −12, and another −4 if *every* AI project is a wrapper. A *tutorial-style* entry (under 18 words of description, or clone/tutorial wording) costs −3.
 - **Context weights do the "evidence over keywords" work.** "FastAPI" in a project bullet is worth 7 points; in a skills list it is worth 2.8, with a note on the ledger line explaining why.
 - **Config, not code.** All weights, caps, context multipliers and penalties live in `proofline.toml`. Signal patterns live in `lexicon.py` as data.
+- **Tiers:** Strong shortlist ≥ 80, Shortlist ≥ 65, Consider ≥ 50, otherwise Low fit.
 - **Confidence** (`high` / `medium` / `low`) tells a reviewer how much of a score rests on applied evidence rather than skill-list claims, and how cleanly the PDF parsed. In other words, which ledgers deserve a human look.
 
 ### LLM usage: a bounded second opinion, not the judge
@@ -97,12 +100,13 @@ Rules are predictable but miss nuance. For example, an OpenAI log analyser wired
 - If the reply is malformed it gets one repair retry. If that fails, or the provider errors, the review is marked `failed` and the rule-based score stands. Results are cached by (model, prompt version, resume hash).
 - Provider-agnostic: there is one `OpenAICompatibleReviewer`, and OpenAI, Groq, Gemini (OpenAI endpoint), OpenRouter and Ollama are all just `LLM_BASE_URL` + `LLM_MODEL`.
 
-The shipped `results.json` was produced **rule-based** (`--llm` off). That keeps it reproducible: anyone who clones the repo gets the same ranking, with no API key needed.
+The shipped `results.json` was produced **rule-based** (`--llm` off), with the committed GitHub snapshot. That keeps it reproducible: anyone who clones the repo gets the same ranking, with no API key needed.
 
 ### GitHub scoring: recency + relevance, failure-tolerant
 - **Activity (0–5)** is based on days since the last push to an *original* repo (forks and archives excluded): ≤30 days → 5, ≤90 → 4, ≤180 → 3, ≤365 → 2, older → 1.
 - **Relevance (0–5)** gives 1.5 points per original repo pushed in the last 12 months that is Python/Jupyter or AI-flavoured by name, description or topic.
 - The username is taken from text *and* link annotations. When a resume only links repos, the repo owner is used.
+- **Shipped snapshot.** `cache/github/` holds the public GitHub data used for the shipped `results.json` (taken 2026-10-08), so a fresh clone reproduces the same ranking offline. Delete `cache/github/` to fetch live data.
 - Only **eligible** candidates are enriched, which saves API budget. A missing, private or rate-limited profile gives 0 points and a recorded status, and never affects eligibility.
 
 ### Other engineering choices

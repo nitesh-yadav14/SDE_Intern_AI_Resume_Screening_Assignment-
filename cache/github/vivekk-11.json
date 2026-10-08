@@ -1,0 +1,18 @@
+{
+  "username": "Vivekk-11",
+  "status": "ok",
+  "detail": "public GitHub snapshot taken 2026-10-08",
+  "public_repos": 70,
+  "days_since_last_push": 20,
+  "active_repos_90d": 1,
+  "relevant_repos": [
+    "Dossier"
+  ],
+  "top_languages": [
+    "Rust",
+    "TypeScript",
+    "Solidity",
+    "Python"
+  ],
+  "from_cache": false
+}

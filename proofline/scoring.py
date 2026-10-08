@@ -237,5 +237,5 @@ def narrate(card: ScoreCard, present: set[str], weights: dict) -> tuple[str, lis
 
 
 def tier(total: float) -> str:
-    return ("Strong shortlist" if total >= 72 else "Shortlist" if total >= 58
-            else "Consider" if total >= 45 else "Low fit")
+    return ("Strong shortlist" if total >= 80 else "Shortlist" if total >= 65
+            else "Consider" if total >= 50 else "Low fit")

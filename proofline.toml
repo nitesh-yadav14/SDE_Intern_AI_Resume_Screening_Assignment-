@@ -51,7 +51,7 @@ tutorial_min_words        = 18
 [github]
 activity_points  = 5          # recency of the latest public push
 relevance_points = 5          # maintained, original, Python/AI repos
-cache_dir        = ".cache/github"
+cache_dir        = "cache/github"   # committed snapshot; delete it to fetch live
 timeout_seconds  = 8
 max_workers      = 4          # bounded concurrency for API calls
 

@@ -1,0 +1,20 @@
+{
+  "username": "atulkumar2025",
+  "status": "ok",
+  "detail": "public GitHub snapshot taken 2026-10-08",
+  "public_repos": 9,
+  "days_since_last_push": 67,
+  "active_repos_90d": 5,
+  "relevant_repos": [
+    "SmartATS",
+    "House-Price-Prediction",
+    "Question-Paper-Generator",
+    "SmartATS-Foundation"
+  ],
+  "top_languages": [
+    "TypeScript",
+    "Python",
+    "JavaScript"
+  ],
+  "from_cache": false
+}

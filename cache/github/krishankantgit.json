@@ -1,0 +1,18 @@
+{
+  "username": "krishankantgit",
+  "status": "ok",
+  "detail": "public GitHub snapshot taken 2026-10-08",
+  "public_repos": 21,
+  "days_since_last_push": 25,
+  "active_repos_90d": 3,
+  "relevant_repos": [
+    "ai-powered-resume-screener",
+    "whatsapp-chatbot"
+  ],
+  "top_languages": [
+    "HTML",
+    "Java",
+    "JavaScript"
+  ],
+  "from_cache": false
+}

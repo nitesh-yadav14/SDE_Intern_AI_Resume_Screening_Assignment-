@@ -1,0 +1,17 @@
+{
+  "username": "raghuvardhan07",
+  "status": "ok",
+  "detail": "public GitHub snapshot taken 2026-10-08",
+  "public_repos": 35,
+  "days_since_last_push": 35,
+  "active_repos_90d": 3,
+  "relevant_repos": [
+    "wexa-ai-assignment"
+  ],
+  "top_languages": [
+    "TypeScript",
+    "Python",
+    "JavaScript"
+  ],
+  "from_cache": false
+}

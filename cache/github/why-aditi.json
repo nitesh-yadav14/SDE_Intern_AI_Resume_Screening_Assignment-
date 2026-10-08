@@ -1,0 +1,25 @@
+{
+  "username": "why-aditi",
+  "status": "ok",
+  "detail": "public GitHub snapshot taken 2026-10-08",
+  "public_repos": 53,
+  "days_since_last_push": 6,
+  "active_repos_90d": 15,
+  "relevant_repos": [
+    "Understudy",
+    "PitchPerfect",
+    "hinglish-turn-detector",
+    "linkedin-profile-api",
+    "ghost-town",
+    "Zycus-Assignment",
+    "Sieve",
+    "AI-Recruiter-Ranking-Engine"
+  ],
+  "top_languages": [
+    "TypeScript",
+    "Python",
+    "JavaScript",
+    "HTML"
+  ],
+  "from_cache": false
+}

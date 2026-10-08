@@ -1,0 +1,25 @@
+{
+  "username": "Prathameshh-Patil",
+  "status": "ok",
+  "detail": "public GitHub snapshot taken 2026-10-08",
+  "public_repos": 18,
+  "days_since_last_push": 0,
+  "active_repos_90d": 4,
+  "relevant_repos": [
+    "intentbench",
+    "replydesk",
+    "slotwise",
+    "Intelligent-Loan-Document-Processing",
+    "ai-saas-kit",
+    "AdaptiveAgentic-RAG",
+    "Agent-Skill-Manager",
+    "Made-With-ML"
+  ],
+  "top_languages": [
+    "Python",
+    "TypeScript",
+    "Jupyter Notebook",
+    "JavaScript"
+  ],
+  "from_cache": false
+}

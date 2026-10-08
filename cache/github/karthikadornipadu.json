@@ -1,0 +1,23 @@
+{
+  "username": "KarthikaDornipadu",
+  "status": "ok",
+  "detail": "public GitHub snapshot taken 2026-10-08",
+  "public_repos": 20,
+  "days_since_last_push": 123,
+  "active_repos_90d": 0,
+  "relevant_repos": [
+    "Diabetes-Prediction-ML",
+    "hate-speech-detection-tweets-ml",
+    "alpha-pulse-financial-analytics",
+    "retail-analytics-rfm-analysis",
+    "trade-api",
+    "genai-chat-assistant"
+  ],
+  "top_languages": [
+    "Python",
+    "JavaScript",
+    "Jupyter Notebook",
+    "TypeScript"
+  ],
+  "from_cache": false
+}

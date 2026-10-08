@@ -1,0 +1,22 @@
+{
+  "username": "AbhinavMishra32",
+  "status": "ok",
+  "detail": "public GitHub snapshot taken 2026-10-08",
+  "public_repos": 62,
+  "days_since_last_push": 0,
+  "active_repos_90d": 6,
+  "relevant_repos": [
+    "agate",
+    "spar",
+    "fxpnt",
+    "xitecoin",
+    "DecipathAI"
+  ],
+  "top_languages": [
+    "TypeScript",
+    "Java",
+    "Makefile",
+    "Python"
+  ],
+  "from_cache": false
+}

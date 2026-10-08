@@ -1,0 +1,21 @@
+{
+  "username": "vikrammadhyasta",
+  "status": "ok",
+  "detail": "public GitHub snapshot taken 2026-10-08",
+  "public_repos": 20,
+  "days_since_last_push": 4,
+  "active_repos_90d": 4,
+  "relevant_repos": [
+    "smart-expense-tracker-api",
+    "cfa-lab-aws",
+    "incident-management-system",
+    "cloud-ml-agriculture-predictor"
+  ],
+  "top_languages": [
+    "Python",
+    "TypeScript",
+    "Java",
+    "Jupyter Notebook"
+  ],
+  "from_cache": false
+}

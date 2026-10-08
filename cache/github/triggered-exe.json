@@ -1,0 +1,17 @@
+{
+  "username": "triggered-exe",
+  "status": "ok",
+  "detail": "public GitHub snapshot taken 2026-10-08",
+  "public_repos": 30,
+  "days_since_last_push": 43,
+  "active_repos_90d": 2,
+  "relevant_repos": [
+    "bug-tracker",
+    "gen-ai-nxtwave"
+  ],
+  "top_languages": [
+    "Python",
+    "JavaScript"
+  ],
+  "from_cache": false
+}

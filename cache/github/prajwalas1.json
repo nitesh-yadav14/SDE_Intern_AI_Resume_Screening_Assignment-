@@ -1,0 +1,22 @@
+{
+  "username": "prajwalas1",
+  "status": "ok",
+  "detail": "public GitHub snapshot taken 2026-10-08",
+  "public_repos": 32,
+  "days_since_last_push": 61,
+  "active_repos_90d": 4,
+  "relevant_repos": [
+    "voice-ai-backend",
+    "voice-ai-frontend",
+    "python-low-level-design",
+    "medical-ai-assistant",
+    "HPC-Chatbot-Public",
+    "HPC-Monitoring-Framework"
+  ],
+  "top_languages": [
+    "Python",
+    "HTML",
+    "TypeScript"
+  ],
+  "from_cache": false
+}

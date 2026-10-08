@@ -1,0 +1,19 @@
+{
+  "username": "vaibhavw1",
+  "status": "ok",
+  "detail": "public GitHub snapshot taken 2026-10-08",
+  "public_repos": 10,
+  "days_since_last_push": 22,
+  "active_repos_90d": 2,
+  "relevant_repos": [
+    "AI-First-CRM-HCP-Module",
+    "reimbursement-agent",
+    "job-search-assistance"
+  ],
+  "top_languages": [
+    "Python",
+    "JavaScript",
+    "HTML"
+  ],
+  "from_cache": false
+}

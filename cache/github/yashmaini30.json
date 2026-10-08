@@ -1,0 +1,25 @@
+{
+  "username": "Yashmaini30",
+  "status": "ok",
+  "detail": "public GitHub snapshot taken 2026-10-08",
+  "public_repos": 47,
+  "days_since_last_push": 18,
+  "active_repos_90d": 4,
+  "relevant_repos": [
+    "face-verification-resnet50",
+    "pg-reliability-agent",
+    "glove-detection-yolo",
+    "LangChain-with-Python",
+    "Gaze-Prediction",
+    "Histology-Candida-Analysis",
+    "NASA-Turbofan-RUL",
+    "CartPole-InvertedPendulum"
+  ],
+  "top_languages": [
+    "Python",
+    "Jupyter Notebook",
+    "HTML",
+    "Java"
+  ],
+  "from_cache": false
+}

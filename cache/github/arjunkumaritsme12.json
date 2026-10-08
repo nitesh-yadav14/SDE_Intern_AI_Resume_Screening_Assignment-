@@ -1,0 +1,25 @@
+{
+  "username": "arjunkumaritsme12",
+  "status": "ok",
+  "detail": "public GitHub snapshot taken 2026-10-08",
+  "public_repos": 26,
+  "days_since_last_push": 10,
+  "active_repos_90d": 7,
+  "relevant_repos": [
+    "ShiporaX",
+    "leadpulse-ai",
+    "primetrade_assignment",
+    "EduMind-AI-Adaptive-Learning-Mentor",
+    "Claude-Code-Qwen3-Assignment",
+    "Deepfake-Detection-Multimodal-Explainable-AI-Mini-project",
+    "Medical-RAG-System-for-Healthcare-Knowledge-Access",
+    "AI-Resume-Screening-System"
+  ],
+  "top_languages": [
+    "Python",
+    "TypeScript",
+    "Jupyter Notebook",
+    "JavaScript"
+  ],
+  "from_cache": false
+}

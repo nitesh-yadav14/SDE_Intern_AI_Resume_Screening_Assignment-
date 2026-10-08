@@ -1,0 +1,15 @@
+{
+  "username": "kiran-naregal",
+  "status": "ok",
+  "detail": "public GitHub snapshot taken 2026-10-08",
+  "public_repos": 8,
+  "days_since_last_push": 50,
+  "active_repos_90d": 1,
+  "relevant_repos": [
+    "code-review-agent"
+  ],
+  "top_languages": [
+    "Python"
+  ],
+  "from_cache": false
+}
