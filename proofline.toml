@@ -1,0 +1,65 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  Proofline scoring configuration
+#  Every number that changes a ranking lives here, not in Python code.
+#  Change a weight → re-run → the evidence ledger shows exactly what moved.
+# ─────────────────────────────────────────────────────────────────────────────
+
+[weights]                 # category caps (sum = 100)
+ai_project_depth  = 40
+python_backend    = 30
+cloud_fullstack   = 15
+github            = 10
+engineering_depth = 5
+
+# How much a match is worth depending on WHERE in the resume it appears.
+# A skill used inside a project/job is proof; the same word in a skills list
+# is only a claim.
+[context_weight]
+experience     = 1.0
+projects       = 1.0
+other          = 0.6      # unrecognised section (layout we couldn't segment)
+summary        = 0.5
+skills         = 0.4
+certifications = 0.25
+education      = 0.25
+
+[eligibility]
+# Sections in which a Python mention counts as genuine evidence.
+python_contexts = ["skills", "experience", "projects", "summary", "other"]
+# Python-only frameworks that prove Python even if the word "Python" is absent.
+python_implied_by = ["django", "fastapi", "flask", "pandas", "numpy", "pytorch", "pydantic", "streamlit", "langchain-python"]
+# Sections in which AI evidence counts (skills-only AI is rejected on purpose).
+ai_contexts = ["experience", "projects", "other"]
+
+[ai_depth]
+# Points per capability found inside ONE project / job block.
+capability_points = { retrieval = 7, agents = 8, framework = 5, state = 4, evaluation = 5, data_pipeline = 3, product_backend = 4, llm = 3, shipped = 3 }
+block_cap            = 28      # one project can't earn more than this
+second_block_factor  = 0.30    # breadth: 2nd-best AI project adds 30 %
+third_block_factor   = 0.10
+work_experience_bonus = 3      # AI used in a real job/internship (not only side projects)
+skills_framework_credit = 1    # per AI framework that appears ONLY in skills …
+skills_framework_cap    = 3    # … capped, so keyword lists can't carry a candidate
+# Penalties (negative ledger lines)
+thin_wrapper_penalty      = 6  # per AI block that is only an LLM/API call
+thin_wrapper_penalty_cap  = 12
+only_wrappers_extra       = 4  # extra hit when EVERY AI project is a wrapper
+tutorial_penalty          = 3  # AI block with no implementation detail / tutorial clone
+tutorial_penalty_cap      = 6
+tutorial_min_words        = 18
+
+[github]
+activity_points  = 5          # recency of the latest public push
+relevance_points = 5          # maintained, original, Python/AI repos
+cache_dir        = ".cache/github"
+timeout_seconds  = 8
+max_workers      = 4          # bounded concurrency for API calls
+
+[llm]
+enabled_by_default = false
+max_adjustment     = 6        # LLM may move AI depth by at most ±6 points
+max_workers        = 3
+timeout_seconds    = 45
+cache_dir          = ".cache/llm"
+prompt_version     = "v2"
+max_resume_chars   = 9000

@@ -1,0 +1,123 @@
+<!doctype html><html><head><meta charset=utf-8><title>Proofline — Technical Report</title><style>
+@page{size:A4;margin:16mm 15mm 16mm}
+body{font:10.2pt/1.5 Inter,"Segoe UI",system-ui,sans-serif;color:#1d1b16;margin:0}
+h1{font-size:26pt;line-height:1.05;margin:0 0 6px;letter-spacing:-.02em} h1 em{font-style:normal;color:#d9480f}
+h2{break-after:avoid;font:700 9pt ui-monospace,Menlo,monospace;letter-spacing:.14em;text-transform:uppercase;color:#d9480f;margin:20px 0 8px;
+border-top:1.5px solid #1d1b16;padding-top:8px}
+h3{font-size:11pt;margin:12px 0 4px}
+.k{font:600 8.5pt ui-monospace,Menlo,monospace;letter-spacing:.14em;text-transform:uppercase;color:#6b665a}
+.lede{font-size:11.5pt;color:#3b382f} .m{font:8.5pt ui-monospace,Menlo,monospace;color:#6b665a}
+table{width:100%;border-collapse:collapse;margin:6px 0 4px;font-size:9pt} td,th{border-top:1px solid #e4dfd3;padding:4px 6px;vertical-align:top;text-align:left}
+th{font:600 7.5pt ui-monospace,monospace;text-transform:uppercase;letter-spacing:.08em;color:#6b665a}
+td.n{text-align:right;font-family:ui-monospace,monospace} td.p{font:600 9pt ui-monospace,monospace;white-space:nowrap;text-align:right;width:40px}
+.pos{color:#2b8a3e}.neg{color:#c92a2a} q{font:8.4pt ui-monospace,monospace;background:#f1ede3;padding:0 3px} i{color:#6b665a}
+.flow{display:flex;gap:5px;align-items:stretch;margin:10px 0} .flow div{flex:1;border:1.5px solid #1d1b16;border-radius:6px;padding:6px 7px;font-size:8.3pt}
+.flow b{display:block;font-size:9pt;margin-bottom:2px} .flow .ar{flex:0 0 10px;border:0;padding:0;align-self:center;font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:10px 0} .stats div{background:#f1ede3;border-radius:6px;padding:7px 9px}
+.stats b{display:block;font:700 17pt ui-monospace,monospace} .stats span{font-size:8pt;color:#6b665a}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px} .box{border-left:3px solid #d9480f;padding:2px 0 2px 10px;margin:8px 0}
+ul{margin:4px 0;padding-left:18px} li{margin:2px 0} .pb{break-before:page} code{font:8.8pt ui-monospace,monospace;background:#f1ede3;padding:0 3px}
+</style></head><body>
+<div class=k>SDE Intern · AI Resume Screening Assignment · Technical report</div>
+<h1>Proofline: <em>every point has a receipt.</em></h1>
+<p class=lede>A Python pipeline that screens a folder of resumes for an AI/agentic SDE internship. Proofline builds an
+<b>evidence ledger</b> (one line per point awarded or deducted, each tied to the resume line that earned it), and the score is the
+sum of that ledger. Hard eligibility is rule-based and testable. AI depth is judged per project, thin LLM wrappers are
+penalised explicitly, and an optional LLM reviewer may only nudge the score, using quotes that are checked against the resume.</p>
+
+<div class=stats><div><b>50</b><span>resumes in</span></div><div><b>50</b><span>parsed (0 crashes)</span></div>
+<div><b>32</b><span>pass hard filter</span></div><div><b>21</b><span>shortlist or better</span></div>
+<div><b>7.78s</b><span>full batch runtime</span></div></div>
+
+<h2>1 · Architecture</h2>
+<div class=flow>
+<div><b>① Ingest</b>pypdf vs pdfplumber <i>tournament</i>; link annotations; sections; project blocks</div><div class=ar>→</div>
+<div><b>② Hard gate</b>rules only: Python + AI <i>inside a project/job</i></div><div class=ar>→</div>
+<div><b>③ Ledger</b>per-project AI profiling; context-weighted rubric; penalties as lines</div><div class=ar>→</div>
+<div><b>④ GitHub</b>≤10 pts; cached; bounded threads; circuit breaker</div><div class=ar>→</div>
+<div><b>⑤ LLM review</b>optional; schema-validated; ±6 max; quote-verified</div></div>
+<p>Modules map 1:1 to stages (<code>ingest.py</code>, <code>eligibility.py</code>, <code>scoring.py</code>, <code>github.py</code>,
+<code>llm.py</code>), orchestrated by <code>pipeline.py</code>. All data contracts are Pydantic models (<code>models.py</code>).
+Weights, caps, context multipliers and penalties live in <code>proofline.toml</code>. Signal patterns live in <code>lexicon.py</code>
+as data, so changing a weight is a config edit and the ledger shows exactly which points moved.</p>
+<div class=two><div>
+<h3>Ingestion details that mattered on this dataset</h3>
+<ul><li><b>Extractor tournament.</b> Some PDFs come out letter-spaced in pypdf (<code>S K I L L S</code>), others glue two columns together in
+pdfplumber. Each output is scored for readability and the number of sections it can recognise, and the better one is kept. Here 18 files picked pdfplumber and the rest pypdf.</li>
+<li><b>Hidden GitHub links.</b> Many resumes show only a GitHub <i>icon</i>, so the URL exists only in the PDF link annotations. Reading those
+recovers the handle for about 20 candidates who have no github.com text.</li>
+<li><b>Word-per-line reflow</b> for justified PDFs, and <code>mailto:</code> links preferred when icon glyphs get glued onto the email address.</li></ul>
+</div><div>
+<h3>Reliability</h3>
+<ul><li>Each file is parsed through <code>safe_read</code>, so a corrupt, empty or image-only PDF becomes a <code>failed</code> entry with a reason instead of an exception.</li>
+<li>Duplicates are detected by content hash <i>and</i> email.</li>
+<li>Parsing is CPU-bound, so it runs on a bounded process pool: <b>12.5 s → 6.9 s</b> for 50 PDFs on 2 cores.</li>
+<li>GitHub and LLM calls use bounded thread pools, on-disk caches and typed failure statuses.</li>
+<li><b>19 pytest tests</b> cover eligibility edge cases, ledger arithmetic, penalties, GitHub failure, LLM clamping and hallucination rejection, and a batch containing corrupt and duplicate files.</li></ul>
+</div></div>
+
+<h2 class=pb>2 · Hard eligibility: rules, and the evidence has to be applied</h2>
+<p>Eligibility never involves the LLM. <b>Python</b> must appear in skills, projects, work or the summary. A Python-only framework (Django/FastAPI)
+also counts, but a certification such as "Crash Course on Python" alone does not. <b>AI</b> must appear <i>inside a project or job entry</i>
+as a real anchor (LLM, RAG, embeddings/vector search, an agent framework). Ambiguous words (agent, transformer, chunking, Hugging Face) only count
+next to a strong AI term. Two choices go further than plain keyword matching:</p>
+<div class=box><b>AI listed only in skills is rejected.</b> The requirement is a <i>project</i> showing AI work, so a skills list is a claim, not evidence.<br>
+<b>Using AI coding assistants is not AI engineering.</b> Phrases such as "GitHub Copilot", "Cursor" and "Claude Code" are masked before AI signals are searched for.</div>
+<p>Rejection reasons in this batch:</p><ul><li>No Python evidence — <b>7</b></li><li>No AI/agentic evidence — <b>9</b></li><li>Classical ML only (no LLM/agentic work) — <b>7</b></li></ul>
+<table><tr><th style="width:24%">Candidate</th><th style="width:38%">Recorded reason</th><th>Why it's the right call</th></tr><tr><td><b>MD Azizul Islam</b><br><span class=m>candidate_11.pdf</span></td><td>No evidence of Python in skills, projects or experience</td><td>Built a real RAG platform — but in React/Supabase/Node; no Python anywhere.</td></tr><tr><td><b>Nisarga H. S.</b><br><span class=m>candidate_34.pdf</span></td><td>No AI/LLM/RAG/agentic project evidence</td><td>Python backend dev whose only &#x27;AI&#x27; is using Claude Code / AI tools to code.</td></tr><tr><td><b>Parshuram Kumar</b><br><span class=m>candidate_45.pdf</span></td><td>Only classical ML/DL (e.g. CNN, scikit-learn) — no LLM/RAG/agentic project evidence</td><td>AI terms only in the skills list; no project uses them.</td></tr><tr><td><b>Manoj Kumar K R</b><br><span class=m>candidate_21.pdf</span></td><td>Only classical ML/DL (e.g. CNN, scikit-learn) — no LLM/RAG/agentic project evidence</td><td>Python + CNN image classifier on Hugging Face — classical ML, no LLM/agentic work.</td></tr><tr><td><b>Mukul Pal</b><br><span class=m>candidate_32.pdf</span></td><td>No evidence of Python in skills, projects or experience</td><td>Solid LLM product (BullMQ, schema retries) — but Node.js only.</td></tr></table>
+<p class=m>JavaScript, Java and React are never a reason to reject. Several eligible candidates are full-stack and also meet the Python + AI requirement.</p>
+
+<h2>3 · Scoring: the ledger is the score</h2>
+<div class=two><div>
+<h3>AI depth (40) is judged per project</h3>
+<p>Each project or job block is profiled for capabilities:
+retrieval 7 · agents/tools 8 · framework 5 · state/memory 4 · evaluation 5 · data pipeline 3 · wired into a backend 4 · LLM 3 · shipped/measured 3.
+A single project is capped at 28. The best project counts in full and the next ones at ×0.3 and ×0.1, so breadth can't stand in for depth.
+Applied AI in a real job adds +3. A framework that appears only in the skills list earns 1 point, capped at 3.</p>
+<h3>Penalties are ledger lines, with the quote that triggered them</h3>
+<ul><li><b>Thin wrapper</b> (an LLM call with no retrieval, tools, state, evaluation or pipeline): −6 per project, up to −12, and another −4 if every AI project is a wrapper.</li>
+<li><b>Tutorial-style</b> (under 18 words of description, or clone/tutorial wording): −3 each.</li></ul>
+</div><div>
+<h3>Context weighting does "evidence over keywords"</h3>
+<table><tr><th>Where the match is</th><th>Multiplier</th></tr><tr><td>experience / project entry</td><td class=n>×1.0</td></tr>
+<tr><td>unrecognised section</td><td class=n>×0.6</td></tr><tr><td>summary</td><td class=n>×0.5</td></tr>
+<tr><td>skills list</td><td class=n>×0.4</td></tr><tr><td>certifications / education</td><td class=n>×0.25</td></tr></table>
+<p>So "FastAPI" in a project bullet earns 7 points, and in a skills list 2.8, with a note on the ledger line saying why. Python & backend (30),
+cloud & full stack (15) and engineering depth (5) are rubric items grouped so they can't double-count (FastAPI + Flask + Django → only the best one counts).
+React/Next.js earn points only when a backend is also present. Category caps are explicit negative lines, so <b>Σ ledger = total</b> always.</p>
+</div></div>
+
+<h3>Excerpt: #1 Prathamesh (90), AI depth ledger</h3>
+<table><tr><td class="p pos">+8.0</td><td><b>agents &amp; tool use</b> — <q>Engineered an adaptive multi-agent RAG platform leveraging LangGraph and ChromaDB, integrating LLM APIs for</q></td></tr><tr><td class="p pos">+7.0</td><td><b>retrieval / RAG</b> — <q>Engineered an adaptive multi-agent RAG platform leveraging LangGraph and ChromaDB, integrating LLM APIs for</q></td></tr><tr><td class="p pos">+5.0</td><td><b>orchestration framework</b> — <q>Engineered an adaptive multi-agent RAG platform leveraging LangGraph and ChromaDB, integrating LLM APIs for</q></td></tr><tr><td class="p pos">+5.0</td><td><b>evaluation / guardrails</b> — <q>self-evaluation workflows that tracked hallucination rate and accuracy, enabling iterative error reduction via robust</q></td></tr><tr><td class="p pos">+4.0</td><td><b>wired into a backend/product</b> — <q>Developed complex SQL queries (window functions, CTEs, aggregations) on PostgreSQL/pgvector and visualized weekly</q></td></tr><tr><td class="p pos">+3.0</td><td><b>LLM integration</b> — <q>Engineered an adaptive multi-agent RAG platform leveraging LangGraph and ChromaDB, integrating LLM APIs for</q></td></tr><tr><td class="p pos">+3.0</td><td><b>shipped / measured impact</b> — <q>plus Gemini embeddings to reduce infrastructure costs by ~30% while maintaining high-quality response performance.</q></td></tr></table>
+<h3>Excerpt: a penalised wrapper, Vikram Madhyasta (32)</h3><table><tr><td class="p pos">+3.0</td><td><b>LLM integration</b> — <q>Tools: Jenkins, Docker, Kubernetes, ArgoCD, AWS (ECR, EC2), Git/GitHub, Python, OpenAI API</q></td></tr><tr><td class="p pos">+3.0</td><td><b>shipped / measured impact</b> — <q>Built an end-to-end GitOps CI/CD pipeline (GitHub → Jenkins → AWS ECR → ArgoCD → Kubernetes) that eliminated 100% of</q></td></tr><tr><td class="p neg">-4.0</td><td><b>every AI project is a wrapper</b></td></tr><tr><td class="p neg">-6.0</td><td><b>thin LLM-wrapper project</b> — <q>Tools: Jenkins, Docker, Kubernetes, ArgoCD, AWS (ECR, EC2), Git/GitHub, Python, OpenAI API</q> <i>calls an LLM/API but shows no retrieval, agents, state, evaluation or data pipel</i></td></tr></table>
+
+<h2>4 · GitHub enrichment and LLM review</h2>
+<div class=two><div>
+<h3>GitHub (max 10, never a gate)</h3>
+<ul><li><b>Activity 0–5:</b> days since the last push to an original repo (forks and archives excluded): ≤30d 5 · ≤90d 4 · ≤180d 3 · ≤365d 2 · older 1.</li>
+<li><b>Relevance 0–5:</b> 1.5 points per original repo pushed in the last 12 months that is Python/Jupyter or AI-flavoured by name, description or topics.</li>
+<li>2 calls per user, cached on disk, on a bounded thread pool, and only for eligible candidates. Rate limits, 404s and network errors become a
+recorded status. A circuit breaker stops further calls once the API is down. The token is read from <code>GITHUB_TOKEN</code>.</li>
+<li>This run: skipped: 30, no_profile: 2.</li></ul>
+</div><div>
+<h3>LLM (optional, with tight limits)</h3>
+<ul><li>Reviews only the AI blocks the rules found and returns a Pydantic-validated <code>LLMVerdict</code> (depth label, evidence quote and adjustment per project).</li>
+<li>The adjustment is clamped to <b>±6</b>. Eligibility and the other categories can't be changed.</li>
+<li><b>Hallucination guard:</b> every quote must fuzzy-match the resume. An adjustment backed only by invented quotes is dropped and counted.</li>
+<li>A malformed reply gets one repair retry. After that, or on a provider error, the review is marked <code>failed</code> and the rule-based score stands.</li>
+<li>One OpenAI-compatible adapter covers OpenAI, Groq, Gemini, OpenRouter and Ollama. Results are cached by model, prompt version and resume hash.</li>
+<li>The shipped results are rule-based, so anyone who clones the repo gets the same ranking without an API key.</li></ul>
+</div></div>
+
+<h2>5 · Results (top 12 of 32 eligible)</h2>
+<table><tr><th>#</th><th>Candidate</th><th>Total</th><th>AI/40</th><th>Py/30</th><th>Cloud/15</th><th>GH/10</th><th>Eng/5</th><th>Tier</th><th>GitHub</th></tr><tr><td>1</td><td>Prathamesh</td><td class=n><b>90</b></td><td class=n>40</td><td class=n>30</td><td class=n>15</td><td class=n>0</td><td class=n>5</td><td>Strong shortlist</td><td class=m>skipped</td></tr><tr><td>2</td><td>Raj Thumar</td><td class=n><b>79.5</b></td><td class=n>36.7</td><td class=n>29</td><td class=n>9.3</td><td class=n>0</td><td class=n>4.5</td><td>Strong shortlist</td><td class=m>skipped</td></tr><tr><td>3</td><td>Jyandeep Baishya</td><td class=n><b>79.4</b></td><td class=n>39.4</td><td class=n>28</td><td class=n>9.5</td><td class=n>0</td><td class=n>2.5</td><td>Strong shortlist</td><td class=m>skipped</td></tr><tr><td>4</td><td>Prajwal A S</td><td class=n><b>76.5</b></td><td class=n>40</td><td class=n>29</td><td class=n>6</td><td class=n>0</td><td class=n>1.5</td><td>Strong shortlist</td><td class=m>skipped</td></tr><tr><td>5</td><td>Thejeshwaar Paasila</td><td class=n><b>75.4</b></td><td class=n>34.3</td><td class=n>27</td><td class=n>11.6</td><td class=n>0</td><td class=n>2.5</td><td>Strong shortlist</td><td class=m>skipped</td></tr><tr><td>6</td><td>V Sree Raghu Vardhan</td><td class=n><b>74.3</b></td><td class=n>28</td><td class=n>29.4</td><td class=n>11.9</td><td class=n>0</td><td class=n>5</td><td>Strong shortlist</td><td class=m>skipped</td></tr><tr><td>7</td><td>Gourab Das</td><td class=n><b>72.7</b></td><td class=n>31</td><td class=n>24.2</td><td class=n>13.5</td><td class=n>0</td><td class=n>4</td><td>Strong shortlist</td><td class=m>skipped</td></tr><tr><td>8</td><td>Abhinav Mishra</td><td class=n><b>72.3</b></td><td class=n>35.4</td><td class=n>24.4</td><td class=n>9.5</td><td class=n>0</td><td class=n>3</td><td>Strong shortlist</td><td class=m>skipped</td></tr><tr><td>9</td><td>Arunima Saha</td><td class=n><b>71.3</b></td><td class=n>34.6</td><td class=n>22.75</td><td class=n>10.5</td><td class=n>0</td><td class=n>3.5</td><td>Shortlist</td><td class=m>no_profile</td></tr><tr><td>10</td><td>Sumaiya Sultana</td><td class=n><b>70.7</b></td><td class=n>32.6</td><td class=n>21.6</td><td class=n>12.5</td><td class=n>0</td><td class=n>4</td><td>Shortlist</td><td class=m>skipped</td></tr><tr><td>11</td><td>Yash Maini</td><td class=n><b>70.3</b></td><td class=n>27.8</td><td class=n>28</td><td class=n>10.5</td><td class=n>0</td><td class=n>4</td><td>Shortlist</td><td class=m>skipped</td></tr><tr><td>12</td><td>Vivek Chimnani</td><td class=n><b>69</b></td><td class=n>27</td><td class=n>25</td><td class=n>13.5</td><td class=n>0</td><td class=n>3.5</td><td>Shortlist</td><td class=m>skipped</td></tr></table>
+<p class=m>Full output: <code>output/results.json</code> (ranking with ledgers, rejected candidates with reasons, failed files, batch summary) and <code>output/report.html</code> (interactive report).</p>
+
+<div style="break-inside:avoid"><h2>6 · Trade-offs and next steps</h2>
+<ul><li><b>Known blind spot:</b> rules can't tell that an LLM call wired into a CI failure hook is real product logic. That is the gap the bounded LLM reviewer is meant to cover, and the reason it is limited to adjusting AI depth.</li>
+<li><b>Calibration set:</b> hand-label about 15 resumes, tune the capability weights, and make precision@10 a test.</li>
+<li><b>Layout-aware extraction</b> (pymupdf blocks, with an LLM extraction fallback) for two-column PDFs that still glue words together.</li>
+<li><b>Resume-to-code consistency:</b> read the top repo's dependency files to confirm that the LangGraph/RAG claimed on the resume exists in code.</li>
+<li><b>Reviewer feedback:</b> let recruiters flag wrong ledger lines in the HTML report, and turn those flags into lexicon fixes and regression tests.</li></ul>
+<p class=m>Run: <code>pip install -r requirements.txt && python main.py --input ./resumes --output ./output/results.json</code> · Tests: <code>pytest -q</code></p></div>
+</body></html>

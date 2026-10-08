@@ -1,0 +1,11 @@
+# Pinned to the versions the shipped results.json was produced with.
+# (PDF libraries change text extraction between releases, which can change scores.)
+pypdf==6.19.0
+pdfplumber==0.11.10
+pdfminer.six==20260107
+python-docx==1.2.0
+pydantic==2.13.5
+requests==2.34.2
+pytest>=8.0
+# optional HTTP API:  pip install fastapi uvicorn
+# optional PDF export of docs/technical_report.html:  pip install playwright && playwright install chromium
